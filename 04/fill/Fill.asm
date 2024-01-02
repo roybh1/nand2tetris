@@ -11,4 +11,60 @@
 // 'white' in every pixel;
 // the screen should remain fully clear as long as no key is pressed.
 
-//// Replace this comment with your code.
+// init POSITION
+@SCREEN
+D=A
+@POSITION
+M=D
+
+(LOOP)
+@KBD
+D=M
+@CLEARSCREEN
+D;JEQ
+@FILLSCREEN
+D;JNE
+@LOOP
+0;JMP
+
+(FILLSCREEN)
+// check if POSITION is max
+@POSITION
+D=M
+@24576
+D=D-A
+// if so
+@LOOP
+D;JEQ
+// otherwise
+@POSITION
+A=M
+M=-1
+// next POSITION
+@POSITION
+D=M+1
+M=D
+// back to loop
+@LOOP
+0;JMP
+
+(CLEARSCREEN)
+// check if POSITION is SCREEN
+@POSITION
+D=M
+@SCREEN
+D=D-A
+// if so
+@LOOP
+D;JLT
+// otherwise
+@POSITION
+A=M
+M=0
+// next POSITION
+@POSITION
+D=M-1
+M=D
+// back to loop
+@LOOP
+0;JMP
