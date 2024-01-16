@@ -32,5 +32,45 @@ CHIP CPU {
         pc[15];          // Address of next instruction
 
     PARTS:
-    //// Replace this comment with your code.
-}
+
+    //A&C instructors
+    Or(a=instruction[15], b=false, out=isCinst);
+    Not(in=isCinst, out=isAinst);
+
+    //Write to M if it's C
+    And(a=isCinst, b=instruction[3], out=writeM);
+
+    Mux16(a=instruction, b=ALUOutput, sel=instruction[15], out=inputAreg);
+    
+    //A register
+    Or(a=isAinst, b=instruction[5], out=loadToA);
+    ARegister(in=inputAreg, load=loadToA, out=ARegOutput, out[0..14]=addressM);
+
+    //D register
+    And(a=isCinst, b=instruction[4], out=loadToD);
+    DRegister(in=ALUOutput, load=loadToD, out=DRegOutput);
+
+    //Choose input between M to A
+    And(a=instruction[12], b=instruction[15], out=chooseAorM);
+    Mux16(a=ARegOutput, b=inM, sel=chooseAorM, out=mux16ToALU);
+
+    //Use the 6-11 bit from the instruction to calculate in the ALU
+    ALU(x=DRegOutput, y=mux16ToALU, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f =instruction[7], no=instruction[6], out=ALUOutput, out=outM, zr=zr, ng=ng);
+    
+    Not(in=zr, out=notzr);
+    Not(in=ng, out=notng);
+    And(a=notzr, b=notng, out=pos); //Indicator if it's positive number
+
+    //Set the jump variables according to the most right bits
+    And(a=pos, b=instruction[0], out=JGT); // if D > 0 jump
+    And(a=zr, b=instruction[1], out=JEQ); // if D = 0 jump
+    And(a=ng, b=instruction[2], out=JLT); // if D < 0 jump
+
+    Or(a=JEQ, b=JLT, out=JLE); // "D;JLE // if D ≤ 0 jump" 
+    Or(a=JGT, b=JLE, out=JumpToA);  //Jump to A
+
+    And(a=isCinst, b=JumpToA, out=loadToPC);
+    Not(in=loadToPC, out=inc);
+    PC(in=ARegOutput, inc=inc, load=loadToPC, reset=reset, out[0..14]=pc);
+
+    }
