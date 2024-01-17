@@ -1,3 +1,4 @@
+import os
 import sys
 from typing import Optional
 
@@ -10,8 +11,21 @@ from hack_assembler.symbol_table import SymbolTable
 class AssemblerException(Exception):
     pass
 
+def main(input_path: str):
+    input_files = []
+    if input_path.endswith(".asm"):
+        input_files.append(input_path) 
+    else:
+        for root, _, files in os.walk(input_path):
+            for file in files:
+                if file.endswith(".asm"):
+                    input_files.append(os.path.join(root, file))
 
-def main(input_path: str, output_path: Optional[str] = None):
+    for input_file in input_files:
+        assemble(input_file)
+
+
+def assemble(input_path: str, output_path: Optional[str] = None):
     if not output_path:
         output_path = input_path.split(".asm")[0] + ".hack"
 
@@ -47,8 +61,8 @@ def main(input_path: str, output_path: Optional[str] = None):
                         value = symbol_table.get_address(symbol)
                     else:
                         value = symbol_table.get_address(symbol)
-                        if value is None:
-                            raise AssemblerException()
+                    if value is None:
+                        raise AssemblerException()
                     bin_instruction = str(bin(value))[2:].zfill(16)
                     output_file.write(bin_instruction + "\n")
             elif _type == InstructionType.C:
@@ -62,11 +76,4 @@ def main(input_path: str, output_path: Optional[str] = None):
                 output_file.write(bin_instruction + "\n")
             parser.advance()
 
-
-main("/Users/roybh/Documents/code/idc/sem3/nand-to-tetris/projects/06/assets/add/Add.asm")
-main("/Users/roybh/Documents/code/idc/sem3/nand-to-tetris/projects/06/assets/max/Max.asm")
-main("/Users/roybh/Documents/code/idc/sem3/nand-to-tetris/projects/06/assets/max/MaxL.asm")
-main("/Users/roybh/Documents/code/idc/sem3/nand-to-tetris/projects/06/assets/pong/Pong.asm")
-main("/Users/roybh/Documents/code/idc/sem3/nand-to-tetris/projects/06/assets/pong/PongL.asm")
-main("/Users/roybh/Documents/code/idc/sem3/nand-to-tetris/projects/06/assets/rect/Rect.asm")
-main("/Users/roybh/Documents/code/idc/sem3/nand-to-tetris/projects/06/assets/rect/RectL.asm")
+main(sys.argv[1])
