@@ -17,6 +17,7 @@ class Parser:
         """
         self.file_done = False
         self._f = open(path, "r")
+        self.current_instruction_counter = -1
         self.advance()
 
     @property
@@ -47,6 +48,7 @@ class Parser:
             _current_instruction = re.sub(r'\s', '', _current_instruction)
 
         self._current_instruction = _current_instruction
+        self.current_instruction_counter+=1
 
     def parse_instruction_type(self) -> InstructionType:
         """
