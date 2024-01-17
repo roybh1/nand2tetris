@@ -1,5 +1,5 @@
-from typing import Optional
 import re
+from typing import Optional
 
 from hack_assembler.enums import InstructionType
 
@@ -45,10 +45,10 @@ class Parser:
                 self._current_instruction = ""
                 self._f.close()
                 return
-            _current_instruction = re.sub(r'\s', '', _current_instruction)
+            _current_instruction = re.sub(r"\s", "", _current_instruction)
 
         self._current_instruction = _current_instruction
-        self.current_instruction_counter+=1
+        self.current_instruction_counter += 1
 
     def parse_instruction_type(self) -> InstructionType:
         """
@@ -60,9 +60,7 @@ class Parser:
         current_instruction = self.current_instruction
         if current_instruction.startswith("@"):
             return InstructionType.A
-        elif current_instruction.startswith(
-            "("
-        ) and current_instruction.endswith(")"):
+        elif current_instruction.startswith("(") and current_instruction.endswith(")"):
             return InstructionType.L
         elif "=" in current_instruction or ";" in current_instruction:
             return InstructionType.C
@@ -79,9 +77,7 @@ class Parser:
         current_instruction = self.current_instruction
         if current_instruction.startswith("@"):
             return current_instruction.split("@")[1]
-        elif current_instruction.startswith(
-            "("
-        ) and current_instruction.endswith(")"):
+        elif current_instruction.startswith("(") and current_instruction.endswith(")"):
             return current_instruction.split("(")[1].split(")")[0]
         elif "=" in current_instruction:
             return

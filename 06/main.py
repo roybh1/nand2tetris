@@ -11,10 +11,11 @@ from hack_assembler.symbol_table import SymbolTable
 class AssemblerException(Exception):
     pass
 
+
 def main(input_path: str):
     input_files = []
     if input_path.endswith(".asm"):
-        input_files.append(input_path) 
+        input_files.append(input_path)
     else:
         for root, _, files in os.walk(input_path):
             for file in files:
@@ -35,18 +36,19 @@ def assemble(input_path: str, output_path: Optional[str] = None):
     code = Code()
     symbol_table = SymbolTable()
 
-    # symbol_address = 16
-
     with open(output_path, "w") as output_file:
+        # iter1
         while not parser.file_done:
             if parser.parse_instruction_type() == InstructionType.L:
                 symbol = parser.parse_instruction_symbol()
                 if symbol is not None:
                     if not symbol.isdigit():
-                        symbol_table.add_entry(symbol, parser.current_instruction_counter)
-                        #symbol_address += 1
+                        symbol_table.add_entry(
+                            symbol, parser.current_instruction_counter
+                        )
             parser.advance()
 
+        # iter2
         parser = Parser(input_path)
         while not parser.file_done:
             _type = parser.parse_instruction_type()
@@ -56,8 +58,9 @@ def assemble(input_path: str, output_path: Optional[str] = None):
                     if symbol.isdigit():
                         value = int(symbol)
                     elif not symbol_table.contains(symbol):
-                        symbol_table.add_entry(symbol, parser.current_instruction_counter)
-                        #symbol_address += 1
+                        symbol_table.add_entry(
+                            symbol, parser.current_instruction_counter
+                        )
                         value = symbol_table.get_address(symbol)
                     else:
                         value = symbol_table.get_address(symbol)
@@ -75,5 +78,6 @@ def assemble(input_path: str, output_path: Optional[str] = None):
                 bin_instruction = f"111{bin_comp}{bin_dest}{bin_jump}"
                 output_file.write(bin_instruction + "\n")
             parser.advance()
+
 
 main(sys.argv[1])
