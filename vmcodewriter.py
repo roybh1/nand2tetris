@@ -10,6 +10,11 @@ class VMCoderWriter:
     def close(self):
         self.file.close()
 
+    def writeTheEnd(self):
+        print('(END_LOOP)')
+        print('@END_LOOP')
+        print('0;JMP')
+
     def setFileName(self, fileName) -> None:
         self.fileName=fileName
 
@@ -30,7 +35,7 @@ class VMCoderWriter:
             self.file.write("A=M-1\n")
             if command==("eq" or "lt" or "gt"):
                 self.file.write("D=M-D\n") #x-y
-                self.file.write(f"@ISTRUE{self.commandNum}")
+                self.file.write(f"@ISTRUE{self.commandNum}\n") #If true it will jump and change the value
                 match command:
                     case "eq":
                         self.file.write("D;JEQ\n") 
@@ -38,23 +43,23 @@ class VMCoderWriter:
                         self.file.write("D;JGT\n")
                     case "lt":
                         self.file.write("D;JLT\n")
-                self.file.write("@SP")
-                self.file.write("A=M-1")
-                self.file.write("A=A-1")
-                self.file.write("M=0") #Current stack position
+                self.file.write("@SP\n")
+                self.file.write("A=M-1\n")
+                self.file.write("A=A-1\n")
+                self.file.write("M=0\n") 
 
-                self.file.write(f"@END{self.commandNum}")
-                self.file.write("0;JMP")
+                self.file.write(f"@END{self.commandNum}\n")
+                self.file.write("0;JMP\n")
 
-                self.file.write(f"(ISTRUE{self.commandNum})")
-                self.file.write("@SP")
-                self.file.write("A=M-1")
-                self.file.write("A=A-1")
-                self.file.write("M=0")
-                self.file.write("M!=M")
+                self.file.write(f"(ISTRUE{self.commandNum})\n")
+                self.file.write("@SP\n")
+                self.file.write("A=M-1\n")
+                self.file.write("A=A-1\n")
+                self.file.write("M=0\n")
+                self.file.write("M!=M\n")
 
-                self.file.write(f"END{self.commandNum}")
-                self.file.write("0")
+                self.file.write(f"(END{self.commandNum})\n")
+                self.file.write("0\n")
 
             else:
                 match command:
@@ -66,8 +71,8 @@ class VMCoderWriter:
                         self.file.write("A=A&D\n") #x&y
                     case "or":
                         self.file.write("A=A|D\n") #x|y
-            self.file.write("@SP")
-            self.file.write("M=M-1")       
+            self.file.write("@SP\n")
+            self.file.write("M=M-1\n")       
 
     def writePushPop(self, command, segment, index) -> None:
         self.currentCommand+=1
@@ -111,9 +116,9 @@ class VMCoderWriter:
             if segment=="static":
                 self.file.write("@SP\n")
                 self.file.write("A=M-1\n")
-                self.file.write("D=M")
+                self.file.write("D=M\n")
                 self.file.write(f"@{self.fileName}.{index}\n")
-                self.file.write("M=D")
+                self.file.write("M=D\n")
 
             else:
                 if segment==("local" or "argument" or "this" or "that"):

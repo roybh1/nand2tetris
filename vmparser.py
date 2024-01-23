@@ -1,6 +1,7 @@
-class Parser:
+class VMParser:
+
     #Constructor
-    def __init__(self,inputVMfile):
+    def __init__(self,inputVMfile) -> None:
         self.fileLines =[]
         with open(inputVMfile, 'r') as file:
             for line in file:
@@ -18,7 +19,7 @@ class Parser:
     def hasMoreLines(self) -> bool:
         return self.lineNumber<self.numOfLines
 
-    def advance(self):
+    def advance(self) -> None:
         if self.hasMoreLines():
             self.lineNumber+=1
             self.currentLine=self.fileLines[self.lineNumber]
