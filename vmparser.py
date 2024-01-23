@@ -1,4 +1,3 @@
-
 class Parser:
     #Constructor
     def __init__(self,inputVMfile):
