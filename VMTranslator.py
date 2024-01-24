@@ -3,32 +3,34 @@ from vmparser import VMParser
 from vmcodewriter import VMCoderWriter
 
 
+def convertVMtoAssembly(outputFile, inputPath):
+    outputFile.setFileName(inputPath[:-3])
+    parser = VMParser(inputPath)
+
+    while(parser.hasMoreLines()):
+        parser.advance()
+        commandType = parser.commandType()
+        if commandType=="C_ARITHMETIC":
+            outputFile.writeArithmetic(parser.args1())
+        elif commandType=="C_PUSH" or commandType=="C_POP" or commandType=="C_FUNCTION" or commandType=="C_CALL":
+            outputFile.writePushPop(str(commandType),parser.args1(),parser.args2())
+        else:
+            pass #Next Week - HW8
 
 def main():
-    if len(sys.argv) != 2:
-        vmFile = sys.argv[1]
-        name = vmFile.split('.')[0]
-        file = name +".asm"
-        readVM = VMParser(vmFile)
-        asmFile = VMCoderWriter(file)
-        asmFile.setFileName(name)
+    
+    input = sys.argv[1]
+    file = input[:-2] + 'asm'
 
-        while(readVM.hasMoreLines):
-            readVM.advance()
-            commandType = readVM.commandType()
-            if commandType=="C_ARITHMETIC":
-                asmFile.writeArtihmetic(readVM.args1())
-            elif commandType==("C_PUSH" or "C_POP"):
-                asmFile.writePushPop(commandType,readVM.args1(),readVM.args2())
-            else:
-                pass #Next Week - HW8
+    asmFile = VMCoderWriter(file)
+    convertVMtoAssembly(asmFile,input)
+    
+    #Finish the code
+    asmFile.writeTheEnd()
+    asmFile.close()
+    
 
-        #Finish the code
-        asmFile.writeTheEnd()
-        asmFile.close()
-
-    else:
-        print("No path provided.")
 
 if __name__ == '__main__':
     main()
+

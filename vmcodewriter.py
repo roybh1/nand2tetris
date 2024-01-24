@@ -19,7 +19,7 @@ class VMCoderWriter:
     def writeArithmetic(self, command) -> None:
         self.currentCommand += 1
 
-        # Go to last place
+        # Go to last place in the stack
         self.file.write("@SP\n")
         self.file.write("A=M-1\n")
 
@@ -48,14 +48,13 @@ class VMCoderWriter:
                 self.file.write("M=0\n")
                 self.file.write(f"@END{self.currentCommand}\n")
                 self.file.write("0;JMP\n")
-
                 #(ISTRUE)
                 self.file.write(f"(ISTRUE{self.currentCommand})\n")
                 self.file.write("@SP\n")
                 self.file.write("A=M-1\n")
                 self.file.write("A=A-1\n")
                 self.file.write("M=0\n")
-                self.file.write("M!=M\n")
+                self.file.write("M=!M\n")
                 #(END)
                 self.file.write(f"(END{self.currentCommand})\n")
                 self.file.write("0\n")
@@ -76,7 +75,7 @@ class VMCoderWriter:
     def writePushPop(self, command, segment, index) -> None:
         self.currentCommand += 1
 
-        if command == 'push':  #to change!!!!!!         
+        if command == 'C_PUSH':  #to change!!!!!!         
             if segment == 'constant':
                 self.file.write(f"@{index}\n")
                 self.file.write("D=A\n")
@@ -96,7 +95,7 @@ class VMCoderWriter:
                 self.file.write("@5\n")
                 self.file.write("A=D+A\n")
                 self.file.write("D=M\n")
-            else: #THIS / THAT / LCL / ARG
+            else: # that / local / local / argument
                 self.file.write(f"@{index}\n")
                 self.file.write("D=A\n")
                 match segment:
@@ -124,7 +123,7 @@ class VMCoderWriter:
                 self.file.write("D=M\n")
                 self.file.write(f"@{self.fileName}.{index}\n")
                 self.file.write("M=D\n")
-            else:
+            else: # pointer / temp / that / local / local / argument
                 self.file.write(f"@{index}\n")
                 self.file.write("D=A\n")
                 if segment=="pointer":
@@ -133,7 +132,7 @@ class VMCoderWriter:
                 elif segment=="temp":
                     self.file.write("@5\n")
                     self.file.write("D=D+A\n")
-                else: #THIS / THAT / LCL / ARG
+                else: # that / local / local / argument
                     match segment:
                         case "that":
                             self.file.write("@THAT\n")
@@ -145,12 +144,12 @@ class VMCoderWriter:
                             self.file.write("@ARG\n")
                     self.file.write("D=D+M\n")
  
-                self.file.write("@R13\n")
+                self.file.write("@13\n") #Free place in the stack
                 self.file.write("M=D\n")
                 self.file.write("@SP\n")
                 self.file.write("A=M-1\n")
                 self.file.write("D=M\n")
-                self.file.write("@R13\n")
+                self.file.write("@13\n")
                 self.file.write("A=M\n")
                 self.file.write("M=D\n")
             #SP--
