@@ -1,4 +1,4 @@
-class VMCoderWriter:
+class VMCodeWriter:
 
     def __init__(self, filePath):
         self.file = open(filePath, 'w')
@@ -31,7 +31,7 @@ class VMCoderWriter:
         else:
             self.file.write("D=M\n")
             self.file.write("A=A-1\n")
-            if command == ("eq" or "lt" or "gt"):
+            if command == "eq" or command =="lt" or command == "gt":
                 self.file.write("D=M-D\n")  # x-y
                 self.file.write(f"@ISTRUE{self.currentCommand}\n")  # If true it will jump and change the value
                 match command:

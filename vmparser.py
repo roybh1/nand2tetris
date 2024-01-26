@@ -3,6 +3,7 @@ class VMParser:
     #Constructor
     def __init__(self,inputVMfile) -> None:
         self.fileLines =[]
+        #with open(inputVMfile, 'r') as file: #    
         with open(inputVMfile, 'r') as file:
             for line in file:
                 # Split the line at '//', take the first part, clean the row
@@ -10,7 +11,7 @@ class VMParser:
                 # Add to the list
                 if cleanLine:
                     self.fileLines.append(cleanLine)
-        
+
         self.lineNumber = -1
         self.currentLine = None
         self.numOfLines = len(self.fileLines)-1
