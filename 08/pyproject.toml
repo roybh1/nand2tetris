@@ -7,6 +7,10 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
+black = "^24.1.1"
+isort = "^5.13.2"
+ruff = "^0.1.15"
+pyright = "^1.1.349"
 
 
 [build-system]

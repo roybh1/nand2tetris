@@ -1,30 +1,32 @@
+
+
 class VMParser:
 
-    #Constructor
-    def __init__(self,inputVMfile) -> None:
-        self.fileLines =[]
-        #with open(inputVMfile, 'r') as file: #    
-        with open(inputVMfile, 'r') as file:
+    # Constructor
+    def __init__(self, inputVMfile: str) -> None:
+        self.fileLines = []
+        # with open(inputVMfile, 'r') as file: #
+        with open(inputVMfile, "r") as file:
             for line in file:
                 # Split the line at '//', take the first part, clean the row
-                cleanLine = line.split('//')[0].strip()
+                cleanLine = line.split("//")[0].strip()
                 # Add to the list
                 if cleanLine:
                     self.fileLines.append(cleanLine)
 
         self.lineNumber = -1
-        self.currentLine = None
-        self.numOfLines = len(self.fileLines)-1
-
-
-    def hasMoreLines(self) -> bool:
-        return self.lineNumber<self.numOfLines
+        self.numOfLines = len(self.fileLines) - 1
 
     def advance(self) -> None:
-        if self.hasMoreLines():
-            self.lineNumber+=1
-            self.currentLine=self.fileLines[self.lineNumber]
+        if self.hasMoreLines:
+            self.lineNumber += 1
+            self.currentLine = self.fileLines[self.lineNumber]
 
+    @property
+    def hasMoreLines(self) -> bool:
+        return self.lineNumber < self.numOfLines
+
+    @property
     def commandType(self):
         if "push" in self.currentLine:
             return "C_PUSH"
@@ -45,12 +47,15 @@ class VMParser:
         else:
             return "C_ARITHMETIC"
 
+    @property
     def args1(self) -> str:
-        if self.commandType() == "C_ARITHMETIC":
+        if self.commandType == "C_ARITHMETIC":
             return self.currentLine
-        if self.commandType() == "C_RETURN":
-            return
+        if self.commandType == "C_RETURN":
+            return ""
         else:
             return self.currentLine.split()[1]
-    def args2(self) ->int:
+
+    @property
+    def args2(self) -> int:
         return self.currentLine.split()[2]
