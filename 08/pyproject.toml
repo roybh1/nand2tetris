@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "08"
+version = "0.1.0"
+description = ""
+authors = ["Roy Ben Haroosh <roybh@cisco.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
