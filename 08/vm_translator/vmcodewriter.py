@@ -1,23 +1,58 @@
 class VMCodeWriter:
-
     def __init__(self, filePath: str):
         self.file = open(filePath, "w")
-        self.currentCommand = 0
-        self.fileName = None
+        self.current_command = 0
+        self.file_name = None
 
     def close(self) -> None:
         self.file.close()
 
-    def writeTheEnd(self) -> None:
+    def set_file_name(self, file_name) -> None:
+        self.file_name = file_name
+
+    def write_the_end(self) -> None:
         self.file.write("(END_LOOP)\n")
         self.file.write("@END_LOOP\n")
         self.file.write("0;JMP")
 
-    def setFileName(self, fileName) -> None:
-        self.fileName = fileName
+    def write_label(self, label: str) -> None:
+        self.current_command += 1
 
-    def writeArithmetic(self, command) -> None:
-        self.currentCommand += 1
+        self.file.write(f"({label})\n")
+
+    def write_goto(self, label: str) -> None:
+        self.current_command += 1
+
+        self.file.write(f"@{label}\n")
+        self.file.write("0;JMP\n")
+
+    def write_if(self, label: str) -> None:
+        self.current_command += 1
+
+        # go to last in stack and hold the cond value
+        self.file.write("@SP\n")
+        self.file.write("A=M-1\n")
+        self.file.write("D=M\n")
+
+        # change address of last in stack
+        self.file.write("@SP\n")
+        self.file.write("M=M-1\n")
+
+        # go to if cond holds
+        self.file.write(f"@{label}\n")
+        self.file.write("D;JNE\n")
+
+    def write_function(self, function_name: str, nvars: int) -> None:
+        pass
+
+    def write_call(self, function_name: str, nargs: int) -> None:
+        pass
+
+    def write_return(self) -> None:
+        pass
+
+    def write_arithmetic(self, command: str) -> None:
+        self.current_command += 1
 
         # Go to last place in the stack
         self.file.write("@SP\n")
@@ -36,7 +71,7 @@ class VMCodeWriter:
             if command == "eq" or command == "lt" or command == "gt":
                 self.file.write("D=M-D\n")  # x-y
                 self.file.write(
-                    f"@ISTRUE{self.currentCommand}\n"
+                    f"@ISTRUE{self.current_command}\n"
                 )  # If true it will jump and change the value
                 match command:
                     case "eq":
@@ -50,17 +85,17 @@ class VMCodeWriter:
                 self.file.write("A=M-1\n")
                 self.file.write("A=A-1\n")
                 self.file.write("M=0\n")
-                self.file.write(f"@END{self.currentCommand}\n")
+                self.file.write(f"@END{self.current_command}\n")
                 self.file.write("0;JMP\n")
                 # (ISTRUE)
-                self.file.write(f"(ISTRUE{self.currentCommand})\n")
+                self.file.write(f"(ISTRUE{self.current_command})\n")
                 self.file.write("@SP\n")
                 self.file.write("A=M-1\n")
                 self.file.write("A=A-1\n")
                 self.file.write("M=0\n")
                 self.file.write("M=!M\n")
                 # (END)
-                self.file.write(f"(END{self.currentCommand})\n")
+                self.file.write(f"(END{self.current_command})\n")
                 self.file.write("0\n")
 
             else:
@@ -76,15 +111,15 @@ class VMCodeWriter:
             self.file.write("@SP\n")
             self.file.write("M=M-1\n")
 
-    def writePushPop(self, command: str, segment: str, index: int) -> None:
-        self.currentCommand += 1
+    def write_push_pop(self, command: str, segment: str, index: int) -> None:
+        self.current_command += 1
 
         if command == "C_PUSH":  # to change!!!!!!
             if segment == "constant":
                 self.file.write(f"@{index}\n")
                 self.file.write("D=A\n")
             elif segment == "static":
-                self.file.write(f"@{self.fileName}.{index}\n")
+                self.file.write(f"@{self.file_name}.{index}\n")
                 self.file.write("D=M\n")
 
             elif segment == "pointer":
@@ -125,7 +160,7 @@ class VMCodeWriter:
                 self.file.write("@SP\n")
                 self.file.write("A=M-1\n")
                 self.file.write("D=M\n")
-                self.file.write(f"@{self.fileName}.{index}\n")
+                self.file.write(f"@{self.file_name}.{index}\n")
                 self.file.write("M=D\n")
             else:  # pointer / temp / that / local / local / argument
                 self.file.write(f"@{index}\n")

@@ -1,61 +1,56 @@
-
-
 class VMParser:
-
-    # Constructor
-    def __init__(self, inputVMfile: str) -> None:
-        self.fileLines = []
-        # with open(inputVMfile, 'r') as file: #
-        with open(inputVMfile, "r") as file:
+    def __init__(self, input_vm_file: str) -> None:
+        self.file_lines = []
+        with open(input_vm_file, "r") as file:
             for line in file:
                 # Split the line at '//', take the first part, clean the row
-                cleanLine = line.split("//")[0].strip()
+                clean_line = line.split("//")[0].strip()
                 # Add to the list
-                if cleanLine:
-                    self.fileLines.append(cleanLine)
+                if clean_line:
+                    self.file_lines.append(clean_line)
 
-        self.lineNumber = -1
-        self.numOfLines = len(self.fileLines) - 1
+        self.line_number = -1
+        self.num_of_lines = len(self.file_lines) - 1
 
     def advance(self) -> None:
-        if self.hasMoreLines:
-            self.lineNumber += 1
-            self.currentLine = self.fileLines[self.lineNumber]
+        if self.has_more_lines:
+            self.line_number += 1
+            self.current_line = self.file_lines[self.line_number]
 
     @property
-    def hasMoreLines(self) -> bool:
-        return self.lineNumber < self.numOfLines
+    def has_more_lines(self) -> bool:
+        return self.line_number < self.num_of_lines
 
     @property
-    def commandType(self):
-        if "push" in self.currentLine:
+    def command_type(self):
+        if "push" in self.current_line:
             return "C_PUSH"
-        elif "pop" in self.currentLine:
+        elif "pop" in self.current_line:
             return "C_POP"
-        elif "label" in self.currentLine:
+        elif "label" in self.current_line:
             return "C_LABEL"
-        elif "goto" in self.currentLine:
+        elif "goto" in self.current_line:
             return "C_GOTO"
-        elif "if-goto" in self.currentLine:
+        elif "if-goto" in self.current_line:
             return "C_IF"
-        elif "function" in self.currentLine:
+        elif "function" in self.current_line:
             return "C_FUNCTION"
-        elif "return" in self.currentLine:
+        elif "return" in self.current_line:
             return "C_RETURN"
-        elif "call" in self.currentLine:
+        elif "call" in self.current_line:
             return "C_CALL"
         else:
             return "C_ARITHMETIC"
 
     @property
     def args1(self) -> str:
-        if self.commandType == "C_ARITHMETIC":
-            return self.currentLine
-        if self.commandType == "C_RETURN":
+        if self.command_type == "C_ARITHMETIC":
+            return self.current_line
+        if self.command_type == "C_RETURN":
             return ""
         else:
-            return self.currentLine.split()[1]
+            return self.current_line.split()[1]
 
     @property
     def args2(self) -> int:
-        return self.currentLine.split()[2]
+        return self.current_line.split()[2]

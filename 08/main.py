@@ -5,23 +5,27 @@ from vm_translator.vmcodewriter import VMCodeWriter
 from vm_translator.vmparser import VMParser
 
 
-def convertVMtoAssembly(outputFile: VMCodeWriter, inputPath: str):
+def convert_vm_to_assembly(output_file: VMCodeWriter, inputPath: str):
     baseName = os.path.basename(inputPath)
-    outputFile.setFileName(baseName[:-3])
+    output_file.set_file_name(baseName[:-3])
     parser = VMParser(inputPath)
 
-    while parser.hasMoreLines:
+    while parser.has_more_lines:
         parser.advance()
-        commandType = parser.commandType
-        if commandType == "C_ARITHMETIC":
-            outputFile.writeArithmetic(parser.args1)
-        elif (
-            commandType == "C_PUSH"
-            or commandType == "C_POP"
-            or commandType == "C_FUNCTION"
-            or commandType == "C_CALL"
-        ):
-            outputFile.writePushPop(str(commandType), parser.args1, parser.args2)
+        command_type = parser.command_type
+        if command_type == "C_ARITHMETIC":
+            output_file.write_arithmetic(parser.args1)
+        elif command_type in ["C_PUSH", "C_POP", "C_FUNCTION", "C_CALL"]:
+            output_file.write_push_pop(command_type, parser.args1, parser.args2)
+        elif (command_type == "C_LABEL"):
+            output_file.write_label(parser.args1)
+        elif (command_type == "C_GOTO"):
+            output_file.write_goto(parser.args1)
+        elif (command_type == "C_IF"):
+            output_file.write_if(parser.args1)
+        else:
+            pass
+
 
 
 def main():
@@ -32,7 +36,7 @@ def main():
     if os.path.isfile(input) and input.endswith(".vm"):
         file = input[:-2] + "asm"
         asmFile = VMCodeWriter(file)
-        convertVMtoAssembly(asmFile, input)
+        convert_vm_to_assembly(asmFile, input)
         asmFile.close()
 
     # Dir
@@ -44,7 +48,7 @@ def main():
         for filename in os.listdir(dir):
             if filename.endswith(".vm"):
                 vmPath = os.path.join(dir, filename)
-                convertVMtoAssembly(asmFile, vmPath)
+                convert_vm_to_assembly(asmFile, vmPath)
 
         asmFile.close()
 
