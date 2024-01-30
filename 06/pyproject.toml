@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "homework06"
+version = "0.1.0"
+description = ""
+authors = ["Roy Ben Haroosh <roybh@cisco.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+black = "^23.12.1"
+pylint = "^3.0.3"
+ruff = "^0.1.13"
+isort = "^5.13.2"
+pyright = "^1.1.347"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
