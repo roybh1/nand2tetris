@@ -41,6 +41,7 @@ def main():
     if os.path.isfile(input) and input.endswith(".vm"):
         file = input[:-2] + "asm"
         asmFile = VMCodeWriter(file)
+        asmFile.write_bootstrap_code()
         convert_vm_to_assembly(asmFile, input)
         asmFile.close()
 
@@ -49,6 +50,7 @@ def main():
         dir = os.path.normpath(input)
         outputName = os.path.join(dir, os.path.basename(dir) + ".asm")
         asmFile = VMCodeWriter(outputName)
+        asmFile.write_bootstrap_code()
 
         for filename in os.listdir(dir):
             if filename.endswith(".vm"):

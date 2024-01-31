@@ -3,9 +3,9 @@ class VMCodeWriter:
         self.file = open(filePath, "w")
         self.current_command = 0
         self.file_name = None
-        self.current_func = "none"
 
     def close(self) -> None:
+        #self.write_the_end()
         self.file.close()
 
     def set_file_name(self, file_name) -> None:
@@ -14,7 +14,16 @@ class VMCodeWriter:
     def write_the_end(self) -> None:
         self.file.write("(END_LOOP)\n")
         self.file.write("@END_LOOP\n")
-        self.file.write("0;JMP")
+        self.file.write("0;JMP\n")
+
+    def write_bootstrap_code(self) -> None:
+        self.file.write("@256\n")
+        self.file.write("D=A\n")
+
+        self.file.write("@SP\n")
+        self.file.write("M=D\n")
+
+        self.write_call("Sys.init", 0, new_command=False)
 
     def write_label(self, label: str, new_command: bool = True) -> None:
         if new_command:
@@ -50,13 +59,12 @@ class VMCodeWriter:
         # write entry point label
         self.write_label(function_name, new_command=False)
 
-        self.current_func = function_name
-
         for _ in range(nvars):
             self._push_symbol("0", const=True)
 
-    def write_call(self, function_name: str, nargs: int) -> None:
-        self.current_command += 1 
+    def write_call(self, function_name: str, nargs: int, new_command: bool = True) -> None:
+        if new_command:
+            self.current_command += 1 
 
         return_addr = f"RETURN_{self.current_command}"
         self._push_symbol(return_addr, const=True)
