@@ -29,10 +29,10 @@ class VMParser:
             return "C_POP"
         elif "label" in self.current_line:
             return "C_LABEL"
-        elif "goto" in self.current_line:
-            return "C_GOTO"
         elif "if-goto" in self.current_line:
             return "C_IF"
+        elif "goto" in self.current_line:
+            return "C_GOTO"
         elif "function" in self.current_line:
             return "C_FUNCTION"
         elif "return" in self.current_line:

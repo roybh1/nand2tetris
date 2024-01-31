@@ -109,8 +109,13 @@ A=M
 M=D
 @SP
 M=M+1
+@SP
+A=M-1
+D=M
+@SP
+M=M-1
 @LOOP
-0;JMP
+D;JNE
 @0
 D=A
 @LCL
