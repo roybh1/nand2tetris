@@ -22,7 +22,7 @@ class VMParser:
         return self.line_number < self.num_of_lines
 
     @property
-    def command_type(self):
+    def command_type(self) -> str:
         if "push" in self.current_line:
             return "C_PUSH"
         elif "pop" in self.current_line:
@@ -46,10 +46,7 @@ class VMParser:
     def args1(self) -> str:
         if self.command_type == "C_ARITHMETIC":
             return self.current_line
-        if self.command_type == "C_RETURN":
-            return ""
-        else:
-            return self.current_line.split()[1]
+        return self.current_line.split()[1]
 
     @property
     def args2(self) -> int:

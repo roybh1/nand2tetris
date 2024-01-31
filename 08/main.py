@@ -17,15 +17,14 @@ def convert_vm_to_assembly(output_file: VMCodeWriter, inputPath: str):
             output_file.write_arithmetic(parser.args1)
         elif command_type in ["C_PUSH", "C_POP", "C_FUNCTION", "C_CALL"]:
             output_file.write_push_pop(command_type, parser.args1, parser.args2)
-        elif (command_type == "C_LABEL"):
+        elif command_type == "C_LABEL":
             output_file.write_label(parser.args1)
-        elif (command_type == "C_GOTO"):
+        elif command_type == "C_GOTO":
             output_file.write_goto(parser.args1)
-        elif (command_type == "C_IF"):
+        elif command_type == "C_IF":
             output_file.write_if(parser.args1)
         else:
-            pass
-
+            print(f"found unknown command type: {command_type}")
 
 
 def main():
