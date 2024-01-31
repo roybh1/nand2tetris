@@ -50,4 +50,4 @@ class VMParser:
 
     @property
     def args2(self) -> int:
-        return self.current_line.split()[2]
+        return int(self.current_line.split()[2])
