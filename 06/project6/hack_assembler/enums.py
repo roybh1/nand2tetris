@@ -1,4 +1,7 @@
-class InstructionType():
+from enum import StrEnum
+
+
+class InstructionType(StrEnum):
     A = "A"
     C = "C"
     L = "L"
